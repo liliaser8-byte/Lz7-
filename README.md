@@ -1,188 +1,328 @@
-**Звіт про виконання практичної роботи №7**
+# Лабораторна робота № 7
 
-**Виконала:** студентка 4 курсу СОМ, Серветнік Лілія Ярославівна 
+**Тема:** Опрацювання динамічних масивів.
 
-**Тема роботи: Реалізація черги.**
+**Мета:** *Набути практичних навичок програмного використання вказівників та динамічної пам'яті при опрацюванні масивів.*
 
-**Мета роботи:** *ознайомитися з основами роботи з чергою у Windows Forms за допомогою
-класу System::Collections::Generic::Queue<T>, у C++/CLI, вивчити основні
-операції: додавання, видалення, перегляд елементів, перевірка на порожність і
-очищення черги.*
+**Виконала:** Серветнік Лілія, 4 СОМ
 
-**Виконання завдань**
+**Варіант:** 13
 
-**Завдання 1. Розробити програму для створення та управління чергою,
-що містить цілі числа, та виконати над ним основні операції.**
+---
 
+## ЗАВДАННЯ 1. «Динамічний одновимірний масив»
 
-*Програмний код:*
+**Умова (варіант 13):** Підрахувати кількість додатних елементів у даному одновимірному масиві.
+
+**Реалізація:** Двома окремими програмами — за допомогою вказівника і за допомогою `vector`.
+
+### Програма 1. Вказівник
 
 ```cpp
-		System::Collections::Generic::Queue<int> numbersQueue;
-		System::Collections::Generic::Queue<int> myQueue1;
-		System::Collections::Generic::Queue<String^>StrQueue;
+#include <iostream>
+using namespace std;
 
-	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
-		numbersQueue.Enqueue(10);
-		numbersQueue.Enqueue(20);
-		numbersQueue.Enqueue(30);
+int main() {
+    int size;
 
-		textBox1->Clear();
-		for each (int number in numbersQueue) {
-			textBox1->AppendText(number.ToString() + "\r\n");
-		}
-	}
-private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
-	int number;
-	number = Convert::ToInt32(textBox2->Text);
+    // Запит розміру масиву у користувача
+    cout << "Введіть розмір масиву: ";
+    cin >> size;
 
-	numbersQueue.Enqueue(number);
+    // Створення одновимірного динамічного масиву за допомогою вказівника
+    int* arr = new int[size];
 
-	textBox1->Clear();
+    // Заповнення масиву значеннями, введеними з клавіатури
+    for (int i = 0; i < size; i++) {
+        cout << "Введіть елемент " << i << ": ";
+        cin >> arr[i];
+    }
 
-	for each (int num in numbersQueue) {
-		textBox1->AppendText(num.ToString() + "\r\n");
-	}
+    // Підрахунок додатних елементів
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            count++;
+        }
+    }
+
+    // Виведення результату
+    cout << "Кількість додатних елементів у масиві: " << count << endl;
+
+    // Звільнення пам'яті
+    delete[] arr;
+
+    return 0;
 }
-private: System::Void checkedListBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
-if (checkedListBox1->GetItemChecked(0)) { // "Верхній елемент черги"
-        if (numbersQueue.Count > 0) {
-            MessageBox::Show("Поточний верхній елемент: " + numbersQueue.Peek().ToString());
-        }
-        else {
-            MessageBox::Show("Черга порожня.");
-        }
+```
+*Результат виконання*
+<img width="1655" height="836" alt="image" src="https://github.com/user-attachments/assets/cc8b4702-44d9-4ec6-95b6-e1ef94fd545b" />
+
+Програма виконує завдання у чотири кроки:
+
+* **Створення масиву:** Зчитує розмір `size` і динамічно виділяє пам'ять під масив за допомогою вказівника (`new int[size]`).
+* **Введення даних:** У першому циклі `for` записує значення, які вводяться з клавіатури, у кожен елемент масиву.
+* **Обчислення:** У другому циклі `for` перевіряє кожен елемент умовою `if (arr[i] > 0)`. Якщо число додатне, лічильник `count` збільшується на 1.
+* **Звільнення пам'яті:** Після виведення результату масив обов'язково знищується оператором `delete[] arr` для запобігання витоку пам'яті.
+
+### Програма 2. Vector
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+int main() {
+    // Ініціалізація генератора випадкових чисел
+    srand(time(0));
+
+    // Створення порожнього вектора для цілих чисел
+    vector<int> arr;
+
+    // Заповнення вектора 10-ма випадковими числами від -10 до 10
+    for (int i = 0; i < 10; i++) {
+        int randomNum = rand() % 21 - 10;
+        arr.push_back(randomNum);
     }
-    else if (checkedListBox1->GetItemChecked(1)) { // "Кількість елементів в черзі"
-        int count = numbersQueue.Count;
-        MessageBox::Show("Кількість елементів у черзі: " + count.ToString());
+
+    // Виведення початкового вектора на екран
+    cout << "Початковий масив:\n";
+    for (int i = 0; i < arr.size(); i++) {
+        cout << arr[i] << " ";
     }
-    else if (checkedListBox1->GetItemChecked(2)) { // "Dequeue"
-        if (numbersQueue.Count > 0) {
-            int removedElement = numbersQueue.Dequeue();
-            MessageBox::Show("Видалено верхній елемент: " + removedElement.ToString());
-        }
-        else {
-            MessageBox::Show("Не можна видалити, черга порожня.");
+    cout << endl;
+
+    // Підрахунок додатних елементів
+    int count = 0;
+    for (int i = 0; i < arr.size(); i++) {
+        if (arr[i] > 0) {
+            count++;
         }
     }
 
-    textBox1->Clear();
+    // Виведення результату
+    cout << "\nКількість додатних елементів: " << count << endl;
 
-    for each (int num in numbersQueue) {
-        textBox1->AppendText(num.ToString() + "\r\n");
-    }
-	   }
-private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e) {
-	textBox1->Clear();
+    return 0;
 }
 
 ```
-*Результат виконання:*
-<img width="1112" height="652" alt="image" src="https://github.com/user-attachments/assets/5d23600e-5985-4f9e-9bb8-920a64525a0f" />
-<img width="1176" height="712" alt="image" src="https://github.com/user-attachments/assets/749facc7-b509-411b-b601-c2df2755e568" />
-<img width="1122" height="637" alt="image" src="https://github.com/user-attachments/assets/d36aa97d-188c-4958-9ab4-d1cc34e9c59e" />
-<img width="830" height="557" alt="image" src="https://github.com/user-attachments/assets/a29dfbf4-fe2d-41d1-8269-9887d21117e0" />
+*Результат виконання*
+<img width="1655" height="802" alt="image" src="https://github.com/user-attachments/assets/36099c5a-9668-4fd8-892e-6bbcdae4bc8c" />
 
-
-**Завдання 2. Створити чергу для зберігання цілих чисел.**
-
-*Програмний код:*
+**Пояснення як працює програма:**
+* **Ініціалізація:** Програма налаштовує генератор випадкових чисел за допомогою `srand(time(0))`, щоб кожного запуску числа були різними.
+* **Створення та заповнення вектора:** Створюється порожній вектор `arr`. У циклі генеруються 10 випадкових чисел у діапазоні від -10 до 10, які по черзі додаються в кінець вектора методом `push_back()`.
+* **Виведення даних:** Програма визначає поточну кількість елементів за допомогою `arr.size()`, проходить по них циклом і друкує згенерований масив на екран.
+* **Підрахунок:** Наступний цикл перевіряє кожен елемент умовою `if (arr[i] > 0)`. Якщо число додатне, змінна-лічильник `count` збільшується на одиницю.
+* **Автоматичне очищення пам'яті:** Оскільки використовується контейнер `vector`, пам'ять звільняється автоматично після завершення програми. Використовувати `delete[]` не потрібно.
 
 ```cpp
-private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e) {
-	int size = Convert::ToInt32(textBox3->Text);
+#include <iostream>
+#include <vector>
 
-	for (int i = 0; i < size; ++i) {
-		int inputValue = Convert::ToInt32(Microsoft::VisualBasic::Interaction::InputBox("Елемент черги", "Введіть значення елементів черги", "", 200, 200));
+using namespace std;
 
-		myQueue1.Enqueue(inputValue);
-		listBox1->Items->Add(inputValue.ToString());
-	}
-}
-private: System::Void button5_Click(System::Object^ sender, System::EventArgs^ e) {
-	if (myQueue1.Count > 0) {
-		myQueue1.Dequeue();
-		if (listBox1->Items->Count > 0) {
-			listBox1->Items->RemoveAt(0);
-		}
-	}
-	else {
-		listBox1->Items->Add("Черга порожня");
-	}
-}
-private: System::Void button6_Click(System::Object^ sender, System::EventArgs^ e) {
-	int sum = 0;
-	int evenCount = 0;
+int main() {
+    int size;
 
-	for each(int value in myQueue1) {
-		// Перевірка: чи число парне (value % 2 == 0) та чи належить діапазону від 10 до 20
-		if (value % 2 == 0 && value >= 10 && value <= 20) {
-			sum += value;
-			evenCount++;
-		}
-	}
+    // Запит розміру масиву у користувача
+    cout << "Введіть розмір масиву: ";
+    cin >> size;
 
-	if (evenCount > 0) {
-		double average = (double)sum / evenCount;
-		MessageBox::Show("Середнє значення парних чисел у діапазоні від 10 до 20: " + average.ToString(), "Результат");
-	}
-	else {
-		MessageBox::Show("Немає парних чисел у діапазоні від 10 до 20.", "Результат");
-	}
+    // Створення порожнього вектора для цілих чисел
+    vector<int> arr;
+    int temp;
+
+    // Заповнення вектора значеннями з клавіатури
+    for (int i = 0; i < size; i++) {
+        cout << "Введіть елемент " << i << ": ";
+        cin >> temp;
+        arr.push_back(temp); 
+    }
+
+    // Підрахунок додатних елементів
+    int count = 0;
+    for (int i = 0; i < arr.size(); i++) {
+        if (arr[i] > 0) {
+            count++;
+        }
+    }
+
+    // Виведення результату
+    cout << "Кількість додатних елементів у масиві: " << count << endl;
+
+    return 0;
 }
 
 ```
+*Результат виконання*
+<img width="1602" height="812" alt="image" src="https://github.com/user-attachments/assets/276a3121-7604-4866-8577-3bcfae0de461" />
 
-*Результат виконання:*
-<img width="1217" height="677" alt="image" src="https://github.com/user-attachments/assets/b2288533-f938-433c-82ff-67fcce4990ba" />
-<img width="806" height="520" alt="image" src="https://github.com/user-attachments/assets/23e9097c-302f-4610-ad0c-1e95ad376e17" />
+**Як це працює:**
+1. Програма просить ввести розмір масиву (кількість елементів).
+2. Створюється порожній вектор `arr`.
+3. У циклі користувач по черзі вводить числа у тимчасову змінну `temp`, і метод `push_back(temp)` відразу додає це число в кінець вектора.
+4. Другий цикл перевіряє кожен елемент за допомогою `arr.size()` і рахує ті, що більші за нуль.
 
+---
 
-**Завдання 3. Створити чергу для зберігання рядків.**
+## ЗАВДАННЯ 2. «Динамічний двовимірний масив»
 
-*Програмний код:*
+**Умова (варіант 13):** Домножити всі елементи матриці на мінімальний елемент.
+
+**Реалізація:** За допомогою вказівників (`int**`).
+
+### Код
 
 ```cpp
+#include <iostream>
 
-private: System::Void button7_Click(System::Object^ sender, System::EventArgs^ e) {
-	int size = Convert::ToInt32(textBox4->Text);
-	for (int i = 0; i < size; ++i) {
-		String^ inputValue = Microsoft::VisualBasic::Interaction::InputBox("Введіть значення елементів черги", "Введіть значення елемента черги", "", 200, 200);
-		StrQueue.Enqueue(inputValue);
-		listBox2->Items->Add(inputValue);
-	}
-}
-private: System::Void button8_Click(System::Object^ sender, System::EventArgs^ e) {
-	if (StrQueue.Count > 0) {
-		StrQueue.Dequeue();
-		if (listBox2->Items->Count > 0) {
-			listBox2->Items->RemoveAt(0);
-		}
-	}
-	else {
-		listBox2->Items->Add("Черга порожня");
-	}
-}
-private: System::Void button9_Click(System::Object^ sender, System::EventArgs^ e) {
-	int CountChars = 0;
+using namespace std;
 
-	for (int i = 0; i < listBox2->Items->Count; i++) {
-		String^ value = listBox2->Items[i]->ToString();
-		CountChars += value->Length;
-	}
+int main() {
+    int rows, cols;
 
-	MessageBox::Show("Загальна кількість символів: " + CountChars, "Підсумок символів");
-}
-};
+    cout << "Введіть кількість рядків матриці: ";
+    cin >> rows;
+    cout << "Введіть кількість стовпців матриці: ";
+    cin >> cols;
+
+    // 1. Динамічне виділення пам'яті для матриці за допомогою new
+    int** matrix = new int*[rows];
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = new int[cols];
+    }
+
+    int min_element;
+
+    // 2. Введення елементів та одночасний пошук мінімального елемента
+    cout << "Введіть елементи матриці:\n";
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cin >> matrix[i][j];
+            
+            // Ініціалізуємо мінімум першим введеним елементом
+            if (i == 0 && j == 0) {
+                min_element = matrix[i][j];
+            } 
+            // Порівнюємо поточний елемент з мінімальним
+            else if (matrix[i][j] < min_element) {
+                min_element = matrix[i][j];
+            }
+        }
+    }
+
+    cout << "\nМінімальний елемент: " << min_element << "\n\n";
+
+    // 3. Домноження всіх елементів на мінімальний та виведення результату
+    cout << "Результуюча матриця:\n";
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            matrix[i][j] *= min_element;
+            cout << matrix[i][j] << "\t";
+        }
+        cout << "\n";
+    }
+
+    // 4. Звільнення динамічної пам'яті
+    for (int i = 0; i < rows; ++i) {
+        delete[] matrix[i]; // Звільняємо кожен рядок
+    }
+    delete[] matrix; // Звільняємо масив вказівників
+
+    return 0;
 }
 
 ```
+*Результат виконання*
+<img width="1907" height="861" alt="image" src="https://github.com/user-attachments/assets/1e02c456-9f78-435a-a73a-d0768694539e" />
 
-*Результат виконання:*
-<img width="1125" height="715" alt="image" src="https://github.com/user-attachments/assets/a72adc46-664c-407b-86f0-b6fb9814071c" />
-<img width="963" height="633" alt="image" src="https://github.com/user-attachments/assets/9edc7efb-cab3-4160-a815-6afb3b685d0e" />
+**Пояснення:** Для реалізації цієї задачі на C++ двовимірний масив (матриця) створюється динамічно за допомогою оператора new. Після виконання математичних операцій виділену пам'ять необхідно обов'язково звільнити за допомогою delete[], щоб уникнути витоків пам'яті.
 
+**Ключові етапи роботи коду:**
+1. int** matrix = new int*[rows]; — створення масиву вказівників, де кожен елемент вказуватиме на окремий рядок матриці.
 
+2. matrix[i] = new int[cols]; — виділення блоків пам'яті під конкретні рядки (стовпці).
 
-**Висновок:** Під час виконання роботи було успішно досягнуто поставленої мети. Я ознайомилася з основами роботи зі структурою даних «черга» у середовищі Windows Forms за допомогою класу System::Collections::Generic::Queue<T> (C++/CLI). На практиці було реалізовано та засвоєно всі базові операції: додавання (Enqueue), видалення (Dequeue), перегляд елементів (Peek), перевірку черги на порожність та її повне очищення (Clear), що дозволило ефективно керувати даними за принципом FIFO.
+3. Пошук мінімуму оптимізовано і відбувається безпосередньо під час зчитування даних з консолі, що економить один повний прохід циклу.
+
+---
+**Реалізація:** За допомогою Vector.
+### Код
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int rows, cols;
+
+    cout << "Введіть кількість рядків матриці: ";
+    cin >> rows;
+    cout << "Введіть кількість стовпців матриці: ";
+    cin >> cols;
+
+    // 1. Створення двовимірного масиву за допомогою std::vector
+    // Одразу виділяємо необхідний розмір: rows рядків по cols елементів
+    vector<vector<int>> matrix(rows, vector<int>(cols));
+
+    int min_element;
+
+    // 2. Введення елементів та одночасний пошук мінімального елемента
+    cout << "Введіть елементи матриці:\n";
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cin >> matrix[i][j];
+            
+            // Ініціалізуємо мінімум першим введеним елементом
+            if (i == 0 && j == 0) {
+                min_element = matrix[i][j];
+            } 
+            // Порівнюємо поточний елемент з мінімальним
+            else if (matrix[i][j] < min_element) {
+                min_element = matrix[i][j];
+            }
+        }
+    }
+
+    cout << "\nМінімальний елемент: " << min_element << "\n\n";
+
+    // 3. Домноження всіх елементів на мінімальний та виведення результату
+    cout << "Результуюча матриця:\n";
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            matrix[i][j] *= min_element;
+            cout << matrix[i][j] << "\t";
+        }
+        cout << "\n";
+    }
+
+    // Звільнення пам'яті не потрібне, оскільки деструктор std::vector зробить це автоматично
+
+    return 0;
+}
+
+```
+*Результат виконання*
+<img width="1686" height="823" alt="image" src="https://github.com/user-attachments/assets/8091a3fd-6722-42b2-bc6e-f4d8351d0c9b" />
+**Пояснення як працює програма:**
+* **Ініціалізація:** Програма запитує кількість рядків та стовпців, після чого створює двовимірний масив за допомогою `std::vector<vector<int>>`, який автоматично керує пам'яттю.
+* **Введення даних та пошук мінімуму (в одному циклі):** Програма зчитує числа, які вводить користувач. Щоб не робити зайвий прохід по масиву, кожен введений елемент одразу порівнюється з поточним мінімумом. Перше введене число стає початковим еталоном для порівняння.
+* **Модифікація матриці:** Програма вдруге проходить по всіх елементах вектора, множить кожен з них на знайдений мінімальний елемент і одразу виводить оновлені значення на екран.
+* **Автоматичне очищення пам'яті:** По завершенню роботи функції `main` контейнер `std::vector` самостійно звільняє оперативну пам'ять, що виключає ризик її витоку і не потребує ручного очищення.
+
+**Висновок**
+
+У ході виконання лабораторної роботи я закріпила теоретичні знання та набула практичних навичок роботи з динамічною пам'яттю в мові C++. Було успішно розв'язано завдання з опрацювання одновимірних та двовимірних масивів двома способами: за допомогою базових вказівників (оператори `new` та `delete`) і за допомогою контейнера `std::vector`.
+На практиці було досліджено та порівняно ці два підходи:
+1. **Використання вказівників:** вимагає чіткого розуміння механізмів виділення пам'яті та ручного її звільнення. Особливо уважним потрібно бути при роботі з двовимірними масивами, де звільнення пам'яті має відбуватися поетапно (спочатку рядки, потім сам масив вказівників), щоб уникнути витоків пам'яті (memory leaks).
+2. **Використання `std::vector`:** значно спрощує і прискорює розробку, робить код чистішим та безпечнішим. Вектор автоматично керує своїм розміром, а його деструктор самостійно звільняє оперативну пам'ять по завершенню роботи, усуваючи необхідність у ручному контролі.
+
+Крім того, під час виконання другого завдання було застосовано алгоритмічну оптимізацію: пошук мінімального елемента матриці виконувався одночасно з її введенням. Це дозволило уникнути зайвого проходу по масиву та підвищити ефективність програми. Загалом, робота дозволила глибше зрозуміти, як ефективно та безпечно працювати з даними, розмір яких невідомий на етапі компіляції.
+
